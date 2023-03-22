@@ -23,9 +23,7 @@ def user():
 
 
 def test_getUserByIdWorksWithExistingUser(db, user):
-    assert db.getUserById('1').name == user.name
-    assert db.getUserById('1').postalCode == user.postalCode
-    assert db.getUserById('1').city == user.city
+    assert db.getUserById('1') == user
 
 
 def test_getUserByIdFailsWithNonExistingUser(db):
