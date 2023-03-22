@@ -4,6 +4,16 @@ The following challenge was proposed by [Sherpa](https://www.sherpa.ai/).
 
 I will use this README to talk about the decisions made and the reasoning behind them
 
+## Installation and running
+
+(Optional, recommended) Use `venv` first, with `python -m venv <name of your venv>`
+
+To install all the requirements: `pip install -r /path/to/requirements.txt`
+
+To run: `python -m src.app`
+
+To execute tests: `pytest` or `python -m pytest` from the root folder
+
 ## Decisions
 
 1. Build a working version first, then clean up and refactor as needed.
