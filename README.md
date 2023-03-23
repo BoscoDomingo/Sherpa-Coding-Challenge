@@ -10,11 +10,13 @@ I will use this README to talk about the decisions made and the reasoning behind
 
 To install all the requirements: `pip install -r /path/to/requirements.txt`
 
-To run: `python -m src.app`
+To run: `python -m src.app` or `python -m flask --app src/app.py run`
 
 To execute tests: `pytest` or `python -m pytest` from the root folder
 
 ## Decisions
+
+In **no** particular order or importance:
 
 1. Build a working version first, then clean up and refactor as needed.
    1. Perfection is the enemy of good. I find myself falling into this pitfall often, and this will help me avoid it.
@@ -41,6 +43,7 @@ To execute tests: `pytest` or `python -m pytest` from the root folder
     1.  Although an implementation detail, it is a simpler and lighter framework than Django, can work perfectly for the stated requirements and one I've worked with in the past with no issues. If it's not broken, don't fix it (but keep questioning if it works)!
 10. Use pytest
     1.  Another implementation detail. Simple and intuitive testing framework. Fits our needs.
+    2.  Could use the built-in unittest but it isn't as easy to work with and pytest has widespread usage so all possible questions will be answered.
 11. No security implemented
     1.  Simply due to a lack of time, but otherwise some form of authentication would've been implemented to avoid users being able to modify other users' profiles, unless explicitly desired
     2.  This could've come with a role-based system where admins could modify any users and many other possibilities, for example.
@@ -57,4 +60,25 @@ To execute tests: `pytest` or `python -m pytest` from the root folder
     2.  If more info was given, then we could filter/narrow the search.
 17. Given-when-then test structure applied where possible
     1.  It is a good framework to work with when writing tests.
-    2.  It provides a clear environment for each test of what exactly is being tested, and reduces cognitive load when reading them
+    2.  It provides a clear environment for each test of what exactly is being tested, and reduces cognitive load when reading them.
+18. In the tests I imported `src` files despite not being the subject under test
+    1.  They should've been mocks. However, I used them for the sake of time.
+    2.  Never would this be shipped to production, as unit tests would no longer be reliable.
+19. I made a `logic` file that can easily be broken into Use Cases, with an injectable DB for the sake of testability
+    1.  That DB can be mocked, and should be an interface instead of a concrete implementation. This was done for the sake of time.
+20. `User`s are value-objects since we treat them as equals even if they are different instances.
+21. No `User` tests
+    1.  The only "logic" is the equality one (initialisation is built-in), and is simple enough that it shouldn't require any testing.
+22. Made the `PUT` operation be idempotent [as expected](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT).
+23. In order to fulfil the TypeScript requirements I would require an actual DB or exposing the current one, essentially turning this app into a DBMS of sorts
+    1.  Time constraints impeded it.
+24. No ENV variables
+    1.  Simply didn't deem it necessary for such a simple project.
+    2.  I would've used them in production, however.
+25. Testing the HTTP Requests themselves should be done via Postman or similar
+    1.  Time constraints impeded mocking the DB properly with Flask.
+    2.  All paths can be covered and automated.
+    3.  The tests I included are not independent. Many use multiple HTTP calls to the same SUT.
+    4.  They also are not fully mocked, so the calls to the Geonames' API is still happenning
+26. All commits were made to the `main` branch for simplicity
+    1.  In a real environment, each development would've had its branch and PR, with a ticket associated to it.
