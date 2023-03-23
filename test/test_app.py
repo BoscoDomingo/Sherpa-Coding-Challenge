@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 import pytest
 
@@ -16,7 +17,7 @@ def client():
 
 @pytest.fixture
 def user() -> User:
-    return User(userId='1', name='John Doe', postalCode='CA98765', city='Los Angeles')
+    return User(userId='1', name='John Doe', postalCode='CA98765')
 
 
 def test_getUserWorksWithExistentUser(client, user: User):
@@ -95,10 +96,12 @@ def test_createUserFailsIfDataIsEmpty(client):
     assert json.loads(response.data) == {'message': 'Error in the request body'}
 
 
+
 def test_updateUserWorksWithValidUserIdAndPostalCode(client, user: User):
     data = {'postalCode': 'GA30250', 'name': user.name}
 
-    response = client.put(f'/user/{user.userId}', json=data, content_type='application/json')
+    with patch('src.logic.Logic._fetchCity', return_value='Bilbao'):
+        response = client.put(f'/user/{user.userId}', json=data, content_type='application/json')
 
     assert response.status_code == 200
     assert json.loads(response.data) == {'message': f'User {user.userId} updated.'}
@@ -111,16 +114,18 @@ def test_updateUserFailsWithNonexistentUserId(client, user: User):
     response = client.put(f'/user/{userId}', json=data, content_type='application/json')
 
     assert response.status_code == 404
-    assert json.loads(response.data) == {'message': 'User not found'}
+    assert json.loads(response.data) == {'message': f"'User {userId} not found'"}
 
 
 def test_updateUserFailsWithInvalidPostalCode(client, user: User):
     data = {'postalCode': 'invalid-postal-code', 'name': user.name}
 
-    response = client.put(f'/user/{user.userId}', json=data, content_type='application/json')
+    with patch('src.logic.Logic._fetchCity', side_effect=Exception('Error in the request')):
+        with pytest.raises(Exception, match='Error in the request'):
+            response = client.put(f'/user/{user.userId}', json=data, content_type='application/json')
 
-    assert response.status_code == 404
-    assert json.loads(response.data) == {'message': 'Error in the request'}
+            assert response.status_code == 404
+            assert json.loads(response.data) == {'message': 'Error in the request'}
 
 
 def test_updateUserFailsIfDataMissingName(client):

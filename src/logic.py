@@ -1,27 +1,26 @@
 import requests
 
-from src.db import LocalDB
+from src.domain.criteria.GetUserCriteria import GetUserCriteria
+from src.domain.criteria.UpdateUserCriteria import UpdateUserCriteria
 from src.domain.entities.User import User
+from src.domain.repositories.UserRepository import UserRepository
 
 
 class Logic:
-    def __init__(self, db: LocalDB):
-        self._db = db
+    def __init__(self, repository: UserRepository):
+        self._repository = repository
 
     def getUserById(self, userId: str) -> User:
-        return self._db.getUserById(userId)
+        return self._repository.get(GetUserCriteria(userId))
 
     def createUserWithId(self, userId: str, name: str, postalCode: str) -> User:
         user = User(userId=userId, name=name, postalCode=postalCode)
-        self._db.addUserToDB(user)
+        self._repository.save(user)
         return user
 
     def updateUserById(self, userId: str, postalCode: str) -> dict[str, str]:
-        if userId not in self._db.master:
-            raise Exception('User not found')
-
         city: str = self._fetchCity(postalCode)
-        self._db.updateUserLocation(userId, postalCode, city)
+        self._repository.update(UpdateUserCriteria(userId, postalCode, city))
         return {'message': f'User {userId} updated.'}
 
     def _fetchCity(self, postalCode: str) -> str:

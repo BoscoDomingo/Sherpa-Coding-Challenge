@@ -2,9 +2,9 @@ from typing import Any
 
 from flask import Flask, jsonify, request
 
-from src.db import LocalDB
-from src.logic import Logic
 from src.domain.entities.User import User
+from src.infrastructure.db.LocalUserRepository import LocalDB
+from src.logic import Logic
 
 app = Flask(__name__)
 _db = LocalDB()
@@ -47,9 +47,10 @@ def updateUser(userId):
     try:
         result = logic.updateUserById(userId, postalCode)
         return jsonify(result)
-    except Exception as e:
-        # Custom exceptions here would allow sending appropriate codes
-        return jsonify({'message': str(e)}), 404
+    except KeyError as e:
+        return jsonify({"message": str(e)}), 404
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 400
 
 
 def _checkInput(json: Any | None) -> bool | None:

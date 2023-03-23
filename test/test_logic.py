@@ -2,8 +2,8 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from src.db import LocalDB
 from src.domain.entities.User import User
+from src.infrastructure.db.LocalUserRepository import LocalDB
 from src.logic import Logic
 
 
@@ -15,27 +15,30 @@ def db() -> LocalDB:
     # If these were to fail, the whole suite would fail.
     # Due to time constraints we'll keep it as is,
     # but a proper mock should be used in the future.
-    db.addUserToDB(user1)
-    db.addUserToDB(user2)
+    db.save(user1)
+    db.save(user2)
     return db
 
 
 @pytest.fixture
 def user() -> User:
-    return User(userId='1', name='John Doe', postalCode='NY12345', city='New York')
+    return User(userId='1', name='John Doe', postalCode='NY12345')
 
 
 def test_getUserByIdWorksWithExistingUser(db: LocalDB, user: User):
     logic = Logic(db)
 
-    assert logic.getUserById('1') == user
+    result = logic.getUserById(user.userId)
+
+    assert result == user
 
 
 def test_getUserByIdFailsWithNonexistentUser(db: LocalDB):
     logic = Logic(db)
+    userId = '3'
 
-    with pytest.raises(Exception, match='User 3 not found'):
-        logic.getUserById('3')
+    with pytest.raises(Exception, match=f'User {userId} not found'):
+        logic.getUserById(userId)
 
 
 @pytest.mark.skip(reason="Redundant since there are no restricions to userIds in place")
@@ -68,16 +71,17 @@ def test_updateUserByIdWorksWithValidUser(db: LocalDB, user: User):
         result = logic.updateUserById(userId=user.userId, postalCode='1000')
 
     assert result == {'message': f'User {user.userId} updated.'}
-    assert logic.getUserById('1').city == 'Bilbao'
-    assert logic.getUserById('1').postalCode == '1000'
+    assert logic.getUserById(user.userId).city == 'Bilbao'
+    assert logic.getUserById(user.userId).postalCode == '1000'
     mockFetchCity.assert_called_once_with('1000')
 
 
 def test_updateUserByIdFailsWithNonexistentUser(db: LocalDB):
     logic = Logic(db)
+    userId = '5'
 
-    with pytest.raises(Exception, match='User not found'):
-        logic.updateUserById(userId='5', postalCode='1000')
+    with pytest.raises(Exception, match=f'User {userId} not found'):
+        logic.updateUserById(userId, postalCode='1000')
 
 
 def test_updateUserById_fetchCityError(db: LocalDB, user: User):

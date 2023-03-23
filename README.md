@@ -16,7 +16,7 @@ To execute tests: `pytest` or `python -m pytest` from the root folder
 
 ## Decisions
 
-In **no** particular order or importance:
+*Not necessarily in any order:*
 
 1. Build a working version first, then clean up and refactor as needed.
    1. Perfection is the enemy of good. I find myself falling into this pitfall often, and this will help me avoid it.
@@ -79,6 +79,9 @@ In **no** particular order or importance:
     1.  Time constraints impeded mocking the DB properly with Flask.
     2.  All paths can be covered and automated.
     3.  The tests I included are not independent. Many use multiple HTTP calls to the same SUT.
-    4.  They also are not fully mocked, so the calls to the Geonames' API is still happenning
 26. All commits were made to the `main` branch for simplicity
     1.  In a real environment, each development would've had its branch and PR, with a ticket associated to it.
+27. I would've liked to create a `ValueObject` and used it via Inheritance, but lacked the time so I just duplicated the `__eq__` functions.
+    1.  A generic version, maybe comparing the two objects' being an instance of the same Class as well as having the same `__dict__` might-ve been a way to do so
+28. No point creating a `SaveUserCriteria` as it would be the same as a `User`
+29. No handling errors from the Geonames API. I assume our end-users will never reach the rate limit
