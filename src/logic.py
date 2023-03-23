@@ -1,7 +1,7 @@
 import requests
 
 from src.db import LocalDB
-from src.user import User
+from src.domain.entities.User import User
 
 
 class Logic:

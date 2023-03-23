@@ -3,8 +3,8 @@ from unittest.mock import Mock, patch
 import pytest
 
 from src.db import LocalDB
+from src.domain.entities.User import User
 from src.logic import Logic
-from src.user import User
 
 
 @pytest.fixture

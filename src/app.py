@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 
 from src.db import LocalDB
 from src.logic import Logic
-from src.user import User
+from src.domain.entities.User import User
 
 app = Flask(__name__)
 _db = LocalDB()

@@ -1,4 +1,4 @@
-from src.user import User
+from src.domain.entities.User import User
 
 
 class LocalDB:

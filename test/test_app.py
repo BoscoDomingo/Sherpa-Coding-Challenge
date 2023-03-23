@@ -3,9 +3,7 @@ import json
 import pytest
 
 from src.app import app
-from src.db import LocalDB
-from src.logic import Logic
-from src.user import User
+from src.domain.entities.User import User
 
 
 @pytest.fixture

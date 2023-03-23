@@ -1,7 +1,7 @@
 import pytest
 
-from src.user import User
 from src.db import LocalDB
+from src.domain.entities.User import User
 
 
 @pytest.fixture
