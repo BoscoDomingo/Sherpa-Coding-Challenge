@@ -85,3 +85,5 @@ To execute tests: `pytest` or `python -m pytest` from the root folder
     1.  A generic version, maybe comparing the two objects' being an instance of the same Class as well as having the same `__dict__` might-ve been a way to do so
 28. No point creating a `SaveUserCriteria` as it would be the same as a `User`
 29. No handling errors from the Geonames API. I assume our end-users will never reach the rate limit
+30. I could've modeled Postal Codes, Names, IDs, Cities, but decided not to for the sake of simplicity
+    1.  Usually it's a good idea to wrap them in custom classes, especially if we were to have specific logic for them such as UUIDs or parsing

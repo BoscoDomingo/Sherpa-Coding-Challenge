@@ -1,7 +1,7 @@
 import pytest
 
-from src.domain.criteria.GetUserCriteria import GetUserCriteria
-from src.domain.criteria.UpdateUserCriteria import UpdateUserCriteria
+from src.domain.criteria.user.GetUserCriteria import GetUserCriteria
+from src.domain.criteria.user.UpdateUserCriteria import UpdateUserCriteria
 from src.domain.entities.User import User
 from src.infrastructure.db.LocalUserRepository import LocalDB
 
